@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task App</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 p-8">
+  <h1 class="text-4xl font-bold mb-6">Task App</h1>
+
+  <section class="mb-8">
+    <h2 class="text-2xl font-semibold mb-4">Add New Task</h2>
+    <form id="add-task-form" class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+          Title:
+        </label>
+        <input
+          type="text"
+          id="task-title"
+          required
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+          Description:
+        </label>
+        <textarea
+          id="task-description"
+          required
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        ></textarea>
+      </div>
+      <button
+        type="submit"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      >
+        Add Task
+      </button>
+    </form>
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-semibold mb-4">Tasks</h2>
+    <div id="tasks" class="space-y-4"></div>
+  </section>
+
+  <script>
+    // Base URL for API endpoints (adjust if your API is on a different URL)
+    const apiUrl = '/api/tasks/';
+
+    // Fetch and display all tasks
+    async function fetchTasks() {
+      try {
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('Error fetching tasks');
+        const tasks = await res.json();
+        renderTasks(tasks);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Render tasks on the page
+    function renderTasks(tasks) {
+      const container = document.getElementById('tasks');
+      container.innerHTML = '';
+      tasks.forEach(task => {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'bg-white shadow-md rounded p-4';
+        taskDiv.dataset.taskId = task.id;
+
+        // Display section
+        const displaySection = document.createElement('div');
+        displaySection.className = 'display-section';
+
+        const titleEl = document.createElement('h3');
+        titleEl.textContent = task.title;
+        titleEl.className = 'text-xl font-bold';
+        displaySection.appendChild(titleEl);
+
+        const descEl = document.createElement('p');
+        descEl.textContent = task.description;
+        descEl.className = 'mb-4';
+        displaySection.appendChild(descEl);
+
+        // Buttons for editing and deleting
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.className = 'bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded mr-2';
+        editBtn.onclick = () => toggleEdit(taskDiv, true);
+        displaySection.appendChild(editBtn);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.className = 'bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded';
+        deleteBtn.onclick = () => deleteTask(task.id);
+        displaySection.appendChild(deleteBtn);
+
+        taskDiv.appendChild(displaySection);
+
+        // Edit form (initially hidden)
+        const editForm = document.createElement('div');
+        editForm.className = 'edit-form hidden mt-4';
+        editForm.innerHTML = `
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Title:
+            </label>
+            <input type="text" class="edit-title shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${task.title}" required />
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Description:
+            </label>
+            <textarea class="edit-description shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>${task.description}</textarea>
+          </div>
+          <button class="save-edit bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded mr-2">Save</button>
+          <button class="cancel-edit bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded">Cancel</button>
+        `;
+        // Save changes
+        editForm.querySelector('.save-edit').onclick = async () => {
+          const newTitle = editForm.querySelector('.edit-title').value;
+          const newDesc = editForm.querySelector('.edit-description').value;
+          await updateTask(task.id, newTitle, newDesc);
+          toggleEdit(taskDiv, false);
+          fetchTasks();
+        };
+        // Cancel editing
+        editForm.querySelector('.cancel-edit').onclick = () => {
+          toggleEdit(taskDiv, false);
+        };
+
+        taskDiv.appendChild(editForm);
+        container.appendChild(taskDiv);
+      });
+    }
+
+    // Toggle edit mode for a task element
+    function toggleEdit(taskDiv, editMode) {
+      const displaySection = taskDiv.querySelector('.display-section');
+      const editForm = taskDiv.querySelector('.edit-form');
+      if (editMode) {
+        displaySection.classList.add('hidden');
+        editForm.classList.remove('hidden');
+      } else {
+        displaySection.classList.remove('hidden');
+        editForm.classList.add('hidden');
+      }
+    }
+
+    // Add a new task
+    document.getElementById('add-task-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('task-title').value;
+      const description = document.getElementById('task-description').value;
+
+      try {
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: title,
+            description: description,
+            completed: false
+          })
+        });
+        if (!res.ok) throw new Error('Error adding task');
+        document.getElementById('task-title').value = '';
+        document.getElementById('task-description').value = '';
+        fetchTasks();
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    // Update an existing task
+    async function updateTask(taskId, title, description) {
+      try {
+        const res = await fetch(apiUrl + taskId + '/', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: title,
+            description: description,
+            completed: false
+          })
+        });
+        if (!res.ok) throw new Error('Error updating task');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Delete a task
+    async function deleteTask(taskId) {
+      try {
+        const res = await fetch(apiUrl + taskId + '/', {
+          method: 'DELETE'
+        });
+        if (!res.ok) throw new Error('Error deleting task');
+        fetchTasks();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Initial fetch of tasks when the page loads
+    fetchTasks();
+  </script>
+</body>
+</html>
