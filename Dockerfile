@@ -37,4 +37,4 @@ EXPOSE 8000
 
 # run our application
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["uvicorn", "cc_simple_server.server:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "cc_compose.server:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
