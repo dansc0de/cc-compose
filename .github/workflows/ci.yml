@@ -72,7 +72,6 @@ jobs:
       contents: 'read'
       id-token: 'write'
     needs:
-      - unit-test
       - integration-test
     steps:
       # checkout code
