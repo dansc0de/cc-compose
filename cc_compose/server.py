@@ -106,17 +106,18 @@ async def delete_task(task_id: int):
     """
     Delete a task by its ID.
     """
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM tasks WHERE id = %s", (task_id,))
-    existing_task = cursor.fetchone()
-
-    if not existing_task:
-        conn.close()
-        raise HTTPException(status_code=404, detail="Task not found")
-
-    cursor.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
-    conn.commit()
-    conn.close()
-
-    return {"message": f"Task {task_id} deleted successfully"}
+    raise HTTPException(status_code=500, detail="Not implemented")
+    # conn = get_db_connection()
+    # cursor = conn.cursor()
+    # cursor.execute("SELECT * FROM tasks WHERE id = %s", (task_id,))
+    # existing_task = cursor.fetchone()
+    #
+    # if not existing_task:
+    #     conn.close()
+    #     raise HTTPException(status_code=404, detail="Task not found")
+    #
+    # cursor.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
+    # conn.commit()
+    # conn.close()
+    #
+    # return {"message": f"Task {task_id} deleted successfully"}
