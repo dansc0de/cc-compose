@@ -51,20 +51,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Docker compose up
-        run: docker compose up -d
-      - name: Wait for services
-        run: |
-          while true; do
-            STATUS=$(curl -s -o /dev/null -w '%{http_code}' http://localhost/)
-            if [ $STATUS -eq 200 ]; then
-              echo "Services are up..."
-              break
-            fi
-          done
+        run: docker compose up -d --wait
       - name: Integration tests
         run: |
           apt install jq -y
           ./tests/api_tests.sh
+      - name: Docker compose down
+        run: docker compose down
 
   deploy:
     runs-on: ubuntu-22.04
