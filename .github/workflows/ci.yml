@@ -54,7 +54,6 @@ jobs:
         run: docker compose up -d --wait
       - name: Integration tests
         run: |
-          apt install jq -y
           ./tests/api_tests.sh
       - name: Docker compose down
         run: docker compose down
