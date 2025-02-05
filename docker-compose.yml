@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
       interval: 10s
       timeout: 60s
       retries: 5
@@ -12,7 +12,7 @@ services:
       DATABASE_URL: "postgresql://postgres:postgrespassword@postgres:5432/tasksdb"
     depends_on:
       - postgres
-    expose:
+    ports:
       - "8000:8000"
     volumes:
       - ./cc_compose:/app/cc_compose:Z

@@ -2,6 +2,7 @@
 # This is the webserver. Do not alter this file.
 ################################################
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from cc_compose.models import TaskCreate, TaskRead
@@ -22,6 +23,14 @@ async def serve_ui():
     Serve the main UI page.
     """
     return FileResponse("static/index.html")
+
+
+@app.get("/healthz", response_class=JSONResponse)
+async def serve_ui():
+    """
+    Serve the main UI page.
+    """
+    return JSONResponse(content={"status": "ok"})
 
 
 # POST
