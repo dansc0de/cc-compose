@@ -10,7 +10,7 @@ services:
     expose:
       - "8000"
     volumes:
-      - ./cc_simple_server:/app/cc_simple_server:Z
+      - ./cc_compose:/app/cc_compose:Z
       - ./static:/app/static:Z
     stdin_open: true
     tty: true

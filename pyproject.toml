@@ -1,7 +1,7 @@
 [project]
-name = "cc-simple-server"
+name = "cc-compse"
 version = "0.1.0"
-description = "Cloud Computing CS{16,20}60 Simple Server App"
+description = "Cloud Computing CS{16,20}60 docker compose project"
 authors = [
     {name = "dansc0de dpm79@pitt.edu"}
 ]

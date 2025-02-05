@@ -4,8 +4,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from cc_simple_server.models import TaskCreate, TaskRead
-from cc_simple_server.database import init_db, get_db_connection
+from cc_compose.models import TaskCreate, TaskRead
+from cc_compose.database import init_db, get_db_connection
 
 # init
 init_db()
