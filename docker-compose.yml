@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/healthz || (echo 'Healthcheck failed' && exit 1)"]
       interval: 10s
       timeout: 60s
       retries: 5
