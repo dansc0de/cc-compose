@@ -94,4 +94,6 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: us-central1-docker.pkg.dev/cc-spring2025/cc-compose/app:v2
+          tags: |
+            us-central1-docker.pkg.dev/cc-spring2025/cc-compose/app:${{ github.sha }},
+            us-central1-docker.pkg.dev/cc-spring2025/cc-compose/app:latest
