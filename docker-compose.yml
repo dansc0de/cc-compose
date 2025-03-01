@@ -1,16 +1,19 @@
 services:
   fastapi:
-    ### Add build context instruction here
+    build:
+      context: .
+      dockerfile: Dockerfile
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/healthz || (echo 'Healthcheck failed' && exit 1)"]
       interval: 10s
       timeout: 60s
       retries: 5
-    ### Add environment variables here
-
-    ### Add depends postgres here
-
-    ### expose ports here
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgrespassword@postgres:5432/tasksdb"
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
     volumes:
       - ./cc_compose:/app/cc_compose:Z
       - ./static:/app/static:Z
