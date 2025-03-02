@@ -53,9 +53,10 @@ jobs:
       - name: docker list containers
         run: docker ps -a
       - name: Docker compose up
-        run: docker compose up -d --wait
+        run: docker compose up -d
       - name: Integration tests
         run: |
+          sleep 10
           ./tests/api_tests.sh
       - name: Docker compose down
         run: docker compose down
