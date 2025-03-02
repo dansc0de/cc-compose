@@ -18,7 +18,9 @@ RUN poetry config virtualenvs.create false \
     && poetry install --no-root --no-interaction --no-ansi
 
 # copy all the application code
-COPY . .
+COPY cc_compose cc_compose/
+COPY static static/
+COPY entrypoint.sh .
 
 ##########################
 # Final Stage
