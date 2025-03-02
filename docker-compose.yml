@@ -4,16 +4,17 @@ services:
       context: .
       dockerfile: Dockerfile
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://fastapi:8000/healthz || (echo 'Healthcheck failed' && exit 1)"]
-      interval: 30s
+      test: ["CMD-SHELL", "curl -f http://localhost:8001/healthz || (echo 'Healthcheck failed' && exit 1)"]
+      interval: 10s
       timeout: 60s
-      retries: 10
+      retries: 15
     environment:
       DATABASE_URL: "postgresql://postgres:postgrespassword@postgres:5432/tasksdb"
     depends_on:
-      - postgres
+      - postgres:
+          condition: service_healthy
     ports:
-      - "8000:8000"
+      - "8001:8000"
 
   postgres:
     image: postgres:15
