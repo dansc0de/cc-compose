@@ -50,6 +50,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: docker list containers
+        run: docker ps -a
       - name: Docker compose up
         run: docker compose up -d --wait
       - name: Integration tests
